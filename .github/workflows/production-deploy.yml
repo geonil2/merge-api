@@ -9,8 +9,8 @@ env:
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
   DEPLOY_BUCKET: s3://api.merge.immmapp.com
   CACHE_DIR: ${{ github.workspace }}/node_modules
-  CODE_DEPLOY_APPLICATION_NAME: Merge-code-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Merge
+  CODE_DEPLOY_APPLICATION_NAME: Merge-api-code-deploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Merge-api
 
 jobs:
   build:
