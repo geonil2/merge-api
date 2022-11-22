@@ -1,0 +1,72 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  DEPLOY_BUCKET: s3://merge.immmapp.com
+  CACHE_DIR: ${{ github.workspace }}/node_modules
+  CODE_DEPLOY_APPLICATION_NAME: Merge-code-deploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Merge
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Assume IAM role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Compute dependency cache key
+        id: compute_lockfile_hash
+        run: echo "::set-output name=hash::${{ hashFiles('package-lock.json') }}"
+
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        id: cache_dependencies
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+
+      - name: Install dependencies
+        if: steps.cache_dependencies.outputs.cache-hit == ''
+        run: npm install --force
+
+      - name: Run build
+        run: npm run build
+
+      - name: Make zip file
+        run: zip -r merge-frontend.zip ./
+
+      - name: Copy files to production bucket
+        run: aws s3 cp --region ap-northeast-2 ./merge-frontend.zip ${{ env.DEPLOY_BUCKET }}
+
+      - name: Code Deploy
+        run: |
+          aws deploy create-deployment \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=merge.immmapp.com,bundleType=zip,key=merge-frontend.zip
