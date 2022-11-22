@@ -5,7 +5,6 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const connection = require("./lib/database");
 const { notFound, errorHandler } = require("./middlewares/error");
-
 // Express Server
 const app = express();
 
