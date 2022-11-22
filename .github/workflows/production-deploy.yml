@@ -52,16 +52,13 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache_dependencies.outputs.cache-hit == ''
-        run: npm install --force
-
-      - name: Run build
-        run: npm run build
+        run: npm install
 
       - name: Make zip file
-        run: zip -r merge-api-frontend.zip ./
+        run: zip -r merge-api.zip ./
 
       - name: Copy files to production bucket
-        run: aws s3 cp --region ap-northeast-2 ./merge-api-frontend.zip ${{ env.DEPLOY_BUCKET }}
+        run: aws s3 cp --region ap-northeast-2 ./merge-api.zip ${{ env.DEPLOY_BUCKET }}
 
       - name: Code Deploy
         run: |
@@ -69,4 +66,4 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=api.merge.immmapp.com,bundleType=zip,key=merge-api-frontend.zip
+          --s3-location bucket=api.merge.immmapp.com,bundleType=zip,key=merge-api.zip
