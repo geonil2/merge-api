@@ -4,14 +4,20 @@ files:
   - source: /
     destination: /home/ubuntu/merge-api
     overwrite: yes
+
 permissions:
   - object: /home/ubuntu/merge-api
     pattern: "**"
-    owner: root
-    group: root
-    mode: 755
+    owner: ubuntu
+    group: ubuntu
+    mod: 755
+
 hooks:
-  ApplicationStart:
-    - location: scripts/deploy.sh
+  ApplicationStop:
+    - location: scripts/application_stop.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 300
+      runas: ubuntu
