@@ -9,7 +9,7 @@ exports.createComment = async (req, res, next) => {
     const { contents } = req.body;
     const owner = req.user._id;
     const boardId = req.params.board_id;
-    console.log(contents, owner, boardId)
+
     if (!isValidObjectId(boardId)) {
       res.status(400);
       throw new Error("Invalid ObjectId");
@@ -60,7 +60,7 @@ exports.updateComment = async (req, res, next) => {
 
     const comment = await Comment.findById(commentId);
     const user = req.user._id;
-    console.log(comment, 'comment')
+
     if (user !== comment.owner.toString()) {
       res.status(403);
       throw new Error("Access denied");
@@ -98,7 +98,7 @@ exports.deleteComment = async (req, res, next) => {
     const comment = await Comment.findById(commentId);
     const user = req.user._id;
 
-    if (user !== comment.user.toString()) {
+    if (user !== comment.owner.toString()) {
       res.status(403);
       throw new Error("Access denied");
     }

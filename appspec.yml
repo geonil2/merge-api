@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/merge-frontend
+    destination: /home/ubuntu/merge-api
     overwrite: yes
 permissions:
-  - object: /home/ubuntu/merge-frontend
+  - object: /home/ubuntu/merge-api
     pattern: "**"
     owner: root
     group: root

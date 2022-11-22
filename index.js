@@ -23,7 +23,6 @@ app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json({ limit: "5mb" }));
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
 app.use("/api/boards", require("./routes/boards")); // 게시글
 app.use("/api/comments", require("./routes/comments")); // 댓글
 app.use("/api/likes", require("./routes/like")); // 좋아요

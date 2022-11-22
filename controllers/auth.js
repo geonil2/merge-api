@@ -1,8 +1,5 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const axios = require("axios");
-const Comment = require("../models/Comment");
 
 // POST /api/auth/signup
 exports.signup = async (req, res, next) => {
@@ -25,42 +22,6 @@ exports.signup = async (req, res, next) => {
     next(error);
   }
 };
-
-// POST /api/auth/login
-// exports.login = async (req, res, next) => {
-//   try {
-//     console.log(req.body)
-//     const { email, password } = req.body;
-//
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       res.status(400);
-//       throw new Error("Invalid user credentials");
-//     }
-//
-//     const compare = await bcrypt.compare(password, user.password);
-//     if (!compare) {
-//       res.status(400);
-//       throw new Error("Invalid user credentials");
-//     }
-//
-//     const payload = { _id: user._id };
-//     const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-//       expiresIn: "1d",
-//     });
-//
-//     delete user._doc.__v;
-//     delete user._doc.password;
-//     user._doc["accessToken"] = accessToken;
-//
-//     return res
-//       .status(200)
-//       .json({ user: user._doc, message: "Login successfully" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 
 exports.login = async (req, res, next) => {
   try {

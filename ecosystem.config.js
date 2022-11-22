@@ -1,8 +1,7 @@
 module.exports = {
   apps : [{
-      name: 'merge-frontend',
-      script: "node_modules/next/dist/bin/next",
-      args: 'start',
+      name: 'merge-api',
+      script: "./index.js",
       instances: 0,
       exec_mode: "cluster",
       autorestart: true,

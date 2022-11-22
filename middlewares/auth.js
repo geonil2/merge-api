@@ -1,6 +1,4 @@
 const jwt = require("jsonwebtoken");
-const axios = require("axios");
-const User = require("../models/User");
 
 module.exports = (req, res, next) => {
   try {

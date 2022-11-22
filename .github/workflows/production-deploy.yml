@@ -2,12 +2,12 @@ name: Deploy production
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  DEPLOY_BUCKET: s3://merge.immmapp.com
+  DEPLOY_BUCKET: s3://api.merge.immmapp.com
   CACHE_DIR: ${{ github.workspace }}/node_modules
   CODE_DEPLOY_APPLICATION_NAME: Merge-code-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Merge
@@ -58,10 +58,10 @@ jobs:
         run: npm run build
 
       - name: Make zip file
-        run: zip -r merge-frontend.zip ./
+        run: zip -r merge-api-frontend.zip ./
 
       - name: Copy files to production bucket
-        run: aws s3 cp --region ap-northeast-2 ./merge-frontend.zip ${{ env.DEPLOY_BUCKET }}
+        run: aws s3 cp --region ap-northeast-2 ./merge-api-frontend.zip ${{ env.DEPLOY_BUCKET }}
 
       - name: Code Deploy
         run: |
@@ -69,4 +69,4 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=merge.immmapp.com,bundleType=zip,key=merge-frontend.zip
+          --s3-location bucket=api.merge.immmapp.com,bundleType=zip,key=merge-api-frontend.zip
