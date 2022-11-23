@@ -1,7 +1,6 @@
 #!/bin/bash
 
 REPOSITORY=/home/ubuntu/merge-api
-PROJECT_NAME=merge-api
 
 cd $REPOSITORY
 
