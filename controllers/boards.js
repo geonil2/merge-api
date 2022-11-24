@@ -20,11 +20,11 @@ exports.createBoard = async (req, res, next) => {
   }
 };
 
-// POST /api/boards/upload
+// POST /api/boards/upload/image
 exports.uploadBoardImage = async (req, res, next) => {
   try {
-    const path = req.file.path;
-    return res.status(201).json({ data: path });
+    const uri =  process.env.NODE_ENV === 'production' ? req.file.location : `http://localhost:${process.env.PORT}/${req.file.path}`;
+    return res.status(201).json({ data: uri });
   } catch (error) {
     next(error);
   }
