@@ -113,7 +113,7 @@ exports.getCountByCategory = async (req, res, next) => {
 
     const count = await Board.find({ category }).count();
 
-    return res.status(200).json(count);
+    return res.status(200).json({data : count});
   } catch (error) {
     next(error);
   }
