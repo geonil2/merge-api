@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const connection = require("./lib/database");
 const { notFound, errorHandler } = require("./middlewares/error");
+const cookieParser = require('cookie-parser');
+
 // Express Server
 const app = express();
 
@@ -20,8 +22,10 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-site' } }));
 app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json({ limit: "5mb" }));
+app.use(cookieParser());
 
 // Routes
+app.use("/api/auth", require("./routes/auth")); // 회원
 app.use("/api/boards", require("./routes/boards")); // 게시글
 app.use("/api/comments", require("./routes/comments")); // 댓글
 app.use("/api/likes", require("./routes/like")); // 좋아요

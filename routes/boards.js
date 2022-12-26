@@ -9,7 +9,7 @@ const {
   updateBoardById,
   deleteBoardById,
 } = require("../controllers/boards");
-const auth = require("../middlewares/auth");
+const {auth} = require("../middlewares/auth");
 const upload = require('../middlewares/multer');
 const router = express.Router();
 

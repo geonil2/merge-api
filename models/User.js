@@ -11,13 +11,22 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        image: {
+        password: {
             type: String,
             required: true,
         },
-        accessToken: {
+        nickname: {
             type: String,
             required: true,
+            unique: true,
+        },
+        image: {
+            type: String,
+            required: false,
+        },
+        refreshToken: {
+            type: String,
+            required: false,
         }
     },
     { timestamps: true, versionKey: false }

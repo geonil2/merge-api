@@ -5,7 +5,7 @@ const {
   updateComment,
   deleteComment,
 } = require("../controllers/comments");
-const auth = require("../middlewares/auth");
+const {auth} = require("../middlewares/auth");
 const router = express.Router();
 
 // 댓글 생성
