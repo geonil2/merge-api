@@ -38,6 +38,7 @@ exports.refreshAuth = (req, res, next) => {
       req.user = payload;
       return res.status(400).send({ message: 'Access token is not expired!' }) // 만료 안됬어
     } else {
+      console.log('1')
       return res.status(401).json({ message: "Not authenticated" });
     }
   } catch (error) {
@@ -46,6 +47,7 @@ exports.refreshAuth = (req, res, next) => {
     if (error.message === 'jwt expired') {
       const decoded = jwt.decode(accessToken); // 엑세스 디코딩해서
       if(!decoded) {
+        console.log('2')
         return res.status(401).json({ message: "Not authenticated" });
       }
       req.user = decoded;
