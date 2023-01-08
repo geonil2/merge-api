@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, signin, google, naver, signout, user, updateUserName, refresh } = require("../controllers/auth");
+const { signup, signin, google, kakao, naver, signout, user, updateUserName, refresh} = require("../controllers/auth");
 const {auth, refreshAuth} = require("../middlewares/auth");
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.post("/signin", signin);
 // 로그인 구글(code)
 router.post('/google', google)
 
+// 로그인 카카오(code)
+router.post('/kakao', kakao)
 
 // 로그인 네이버(code)
 router.post('/naver', naver)

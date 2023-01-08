@@ -119,9 +119,53 @@ exports.naver = async (req, res, next) => {
       return await signinResponseWithToken(exist._id, res)
     }
 
-    const createUser = await User.create({ name, email, password: 'google', nickname });
+    const createUser = await User.create({ name, email, password: 'naver', nickname });
     return await signinResponseWithToken(createUser._id, res);
   } catch (error) {
+    next(error);
+  }
+}
+
+// POST /api/auth/kakao
+exports.kakao = async (req, res, next) => {
+  try {
+    const code = req.body.code;
+    console.log(code, 'code')
+    const getAccessToken = await axios.post(`https://kauth.kakao.com/oauth/token`,
+      makeFormData({
+        grant_type: 'authorization_code',
+        client_id: `${process.env.KAKAO_API_KEY}`,
+        redirect_uri: `${process.env.KAKAO_REDIRECT_URL}`,
+        code,
+      }),
+{
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+    const accessToken = getAccessToken.data.access_token;
+    console.log(accessToken, 'accessToken')
+    const { data } = await axios.get(`https://kapi.kakao.com/v2/user/me`,
+{
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      },
+    )
+    const { email, profile } = data.kakao_account;
+
+    const exist = await User.findOne({ email });
+    if (exist) {
+      return await signinResponseWithToken(exist._id, res)
+    }
+
+    const createUser = await User.create({ name: profile.nickname, email, password: 'kakao', nickname: profile.nickname });
+    return await signinResponseWithToken(createUser._id, res);
+
+  } catch (error) {
+    // console.log(error, 'error')
     next(error);
   }
 }
@@ -184,7 +228,7 @@ exports.refresh = async (req, res, next) => {
 
     if (payload) { // 리프레시 토큰해서 id를 찾아내
       const payload = { _id: userId };
-      const accessToken = createToken(payload, "1m");
+      const accessToken = createToken(payload, "1h");
       return res.status(200).json({ data: { accessToken }});
     }
     // 로그아웃 시켜버리기
@@ -201,7 +245,7 @@ exports.refresh = async (req, res, next) => {
 
 const signinResponseWithToken = async (id, res) => {
   const payload = { _id: id };
-  const accessToken = createToken(payload, "1m");
+  const accessToken = createToken(payload, "1h");
   const refreshToken = createToken(payload, "14d");
 
   const user = await User.findOneAndUpdate(
@@ -222,4 +266,12 @@ const createToken = (payload, expire) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: expire,
   });
+}
+
+const makeFormData = (params) => {
+  const searchParams = new URLSearchParams()
+  Object.keys(params).forEach(key => {
+    searchParams.append(key, params[key])
+  })
+  return searchParams;
 }
