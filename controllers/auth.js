@@ -165,7 +165,6 @@ exports.kakao = async (req, res, next) => {
     return await signinResponseWithToken(createUser._id, res);
 
   } catch (error) {
-    // console.log(error, 'error')
     next(error);
   }
 }
@@ -175,6 +174,7 @@ exports.signout = async (req, res, next) => {
   res.cookie('jwt', '', {
     maxAge: 0
   })
+  
   return res.status(200).json({ message: 'success sign out' })
 }
 
@@ -223,20 +223,18 @@ exports.refresh = async (req, res, next) => {
   const userId = req.user._id;
   const user = await User.findOne({ _id: userId });
 
-  if (refresh && refresh === user.refreshToken) { // 리프레시 토큰 끼리 비교 해서 같으면
+  if (refresh && refresh === user.refreshToken) { 
     const payload = jwt.verify(refresh, process.env.JWT_SECRET);
 
-    if (payload) { // 리프레시 토큰해서 id를 찾아내
+    if (payload) {
       const payload = { _id: userId };
       const accessToken = createToken(payload, "1h");
       return res.status(200).json({ data: { accessToken }});
     }
-    // 로그아웃 시켜버리기
-    console.log('로그아웃 시켜버리기1')
+
     return res.status(401).json({ message: "Not authenticated" });
   }
-  // 로그아웃 시켜버리기
-    console.log('로그아웃 시켜버리기2')
+
   return res.status(401).json({ message: "Not authenticated" });
   } catch (error) {
     next(error);
